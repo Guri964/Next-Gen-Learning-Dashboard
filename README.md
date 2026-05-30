@@ -32,6 +32,8 @@ Hydration Mismatches with Dynamic UI: The ActivityTile features a mock contribut
 
 Tailwind v4 PostCSS Integration: Configuring the brand new Tailwind CSS v4 required moving away from the traditional PostCSS plugin structure to the new @tailwindcss/postcss package and updating the globals.css import syntax to ensure the dark-mode theme compiled properly locally.
 
+Framer Motion Strict Typing: During the production build phase, Next.js caught a strict type error regarding Framer Motion's Transition configuration. TypeScript inferred the generic object property type: "spring" as a standard string rather than the specific literal expected by the library. I resolved this by applying an as const assertion to the object to guarantee strict type compliance for the animation generator.
+
 🚀 How to Run Locally
 
 Prerequisites
@@ -54,9 +56,11 @@ git clone <your-repo-url>
 cd <your-repo-directory>
 
 
+
 Install dependencies:
 
 npm install
+
 
 
 Configure Environment Variables:
@@ -66,11 +70,13 @@ Copy the example environment file:
 cp .env.example .env.local
 
 
+
 Open .env.local and add your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (found in your Supabase Project Settings -> API).
 
 Start the development server:
 
 npm run dev
+
 
 
 View the application: Open http://localhost:3000.
