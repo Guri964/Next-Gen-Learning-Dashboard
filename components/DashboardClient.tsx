@@ -7,9 +7,30 @@ import {
   LayoutDashboard, Activity, Settings, User, 
   Flame, Box, Zap
 } from 'lucide-react';
-import type { Course } from '../app/page';
 
+// ==========================================
+// Types & Interfaces
+// ==========================================
+export interface Course {
+  id: string;
+  title: string;
+  progress: number;
+  icon_name: string;
+  created_at: string;
+}
+
+// ==========================================
+// Constants & Configurations
+// ==========================================
 const SPRING_TRANSITION = { type: "spring" as const, stiffness: 300, damping: 20 };
+
+const MOCK_COURSES: Course[] = [
+  { id: '1', title: 'Advanced React Patterns', progress: 75, icon_name: 'code', created_at: new Date().toISOString() },
+  { id: '2', title: 'Framer Motion Mastery', progress: 42, icon_name: 'framer', created_at: new Date().toISOString() },
+  { id: '3', title: 'UI/UX Fundamentals', progress: 100, icon_name: 'palette', created_at: new Date().toISOString() },
+  { id: '4', title: 'Next.js Architecture', progress: 15, icon_name: 'layers', created_at: new Date().toISOString() }
+];
+
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'courses', label: 'My Courses', icon: BookOpen },
@@ -19,25 +40,38 @@ const NAV_ITEMS = [
 
 const ICON_MAP: Record<string, React.ElementType> = {
   'code': Code,
-  'framer': Box,
+  'framer': Box, 
   'palette': Palette,
   'layers': Layers,
   'terminal': Terminal
 };
 
+// ==========================================
+// Animation Variants
+// ==========================================
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    }
   }
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: SPRING_TRANSITION }
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: SPRING_TRANSITION 
+  }
 };
 
+// ==========================================
+// Helper Components
+// ==========================================
 const GrainOverlay = () => (
   <div 
     className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay"
@@ -47,9 +81,14 @@ const GrainOverlay = () => (
   />
 );
 
+// ==========================================
+// Main Components
+// ==========================================
+
 const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (id: string) => void }) => {
   return (
     <>
+      {/* Desktop & Tablet Sidebar */}
       <aside className="hidden md:flex flex-col w-20 lg:w-64 border-r border-neutral-800 bg-neutral-950/50 backdrop-blur-xl h-screen sticky top-0 z-40 transition-all duration-300">
         <div className="p-6 flex items-center justify-center lg:justify-start gap-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(99,102,241,0.4)]">
@@ -100,6 +139,7 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab:
         </div>
       </aside>
 
+      {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 w-full bg-neutral-950/80 backdrop-blur-xl border-t border-neutral-800 z-50 pb-safe">
         <div className="flex items-center justify-around p-4">
           {NAV_ITEMS.map((item) => {
@@ -138,6 +178,8 @@ const HeroTile = () => {
       className="relative overflow-hidden col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-3 rounded-3xl bg-neutral-900 border border-neutral-800 p-6 md:p-10 flex flex-col justify-between group"
     >
       <GrainOverlay />
+      
+      {/* Ambient Gradients */}
       <div className="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500/20 blur-[80px] rounded-full transition-opacity duration-500 group-hover:opacity-100 opacity-60" />
       <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-purple-500/10 blur-[80px] rounded-full" />
 
@@ -174,6 +216,8 @@ const CourseTile = ({ course }: { course: Course }) => {
       className="relative overflow-hidden col-span-1 rounded-3xl bg-neutral-900 border border-neutral-800 p-6 group transition-colors duration-300 hover:border-indigo-500/30 hover:shadow-[0_0_30px_rgba(99,102,241,0.05)]"
     >
       <GrainOverlay />
+      
+      {/* Subtle hover glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/0 via-transparent to-purple-500/0 opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
 
       <div className="relative z-10 h-full flex flex-col justify-between space-y-6">
@@ -188,6 +232,8 @@ const CourseTile = ({ course }: { course: Course }) => {
           <h3 className="font-semibold text-lg text-neutral-100 leading-tight">
             {course.title}
           </h3>
+          
+          {/* Animated Progress Bar */}
           <div className="h-2 w-full bg-neutral-950 rounded-full overflow-hidden">
             <motion.div 
               initial={{ width: 0 }}
@@ -208,6 +254,7 @@ const ActivityTile = () => {
   const weeks = 12;
   const daysPerWeek = 7;
   
+  // Hydration mismatch fix: Initialize with zeros, fill on client
   const [blocks, setBlocks] = useState<number[]>(Array(weeks * daysPerWeek).fill(0));
 
   useEffect(() => {
@@ -233,6 +280,7 @@ const ActivityTile = () => {
       className="relative overflow-hidden col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-1 rounded-3xl bg-neutral-900 border border-neutral-800 p-6 flex flex-col group"
     >
       <GrainOverlay />
+      
       <div className="relative z-10 flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-semibold text-neutral-100 flex items-center gap-2">
@@ -263,7 +311,11 @@ const ActivityTile = () => {
   );
 };
 
-export default function DashboardClient({ initialCourses }: { initialCourses: Course[] }) {
+// ==========================================
+// Main Application Wrapper
+// ==========================================
+// In your local project, change the name of this function from 'App' to 'DashboardClient'
+export default function App({ initialCourses = MOCK_COURSES }: { initialCourses?: Course[] }) {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   return (
@@ -293,20 +345,20 @@ export default function DashboardClient({ initialCourses }: { initialCourses: Co
           </header>
 
           <AnimatePresence mode="wait">
-            <motion.div
-              key="content"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4 md:gap-6"
-            >
-              <HeroTile />
-              <ActivityTile />
-              
-              {initialCourses.map((course) => (
-                <CourseTile key={course.id} course={course} />
-              ))}
-            </motion.div>
+              <motion.div
+                key="content"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4 md:gap-6"
+              >
+                <HeroTile />
+                <ActivityTile />
+                
+                {initialCourses.map((course) => (
+                  <CourseTile key={course.id} course={course} />
+                ))}
+              </motion.div>
           </AnimatePresence>
         </div>
       </main>
