@@ -10,7 +10,6 @@ import {
 import type { Course } from '../app/page';
 
 const SPRING_TRANSITION = { type: "spring" as const, stiffness: 300, damping: 20 };
-
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'courses', label: 'My Courses', icon: BookOpen },
