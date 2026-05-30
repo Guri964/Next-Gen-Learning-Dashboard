@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BookOpen, Code, Layers, Palette, Terminal, 
@@ -314,8 +314,7 @@ const ActivityTile = () => {
 // ==========================================
 // Main Application Wrapper
 // ==========================================
-// In your local project, change the name of this function from 'App' to 'DashboardClient'
-export default function App({ initialCourses = MOCK_COURSES }: { initialCourses?: Course[] }) {
+export default function DashboardClient({ initialCourses = MOCK_COURSES }: { initialCourses?: Course[] }) {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   return (
