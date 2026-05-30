@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🚀 Next-Gen Learning Dashboard
 
-## Getting Started
+A futuristic, high-fidelity learning dashboard prototype built for the "Next-Gen" frontend challenge. It features a fully responsive Bento Grid architecture, deep dark-mode aesthetics, and buttery-smooth, hardware-accelerated animations powered by efficient, server-rendered data.
 
-First, run the development server:
+🏗 Architectural Choices & Component Split
 
-```bash
+To strictly adhere to the App Router paradigm and maximize performance, this application heavily utilizes the React Server Components (RSC) architecture.
+
+1. Server-Side Data Fetching (app/page.tsx)
+
+Data fetching logic is intentionally isolated to Server Components. Using @supabase/supabase-js, the application connects to the PostgreSQL database securely on the server. This prevents shipping the Supabase client bundle to the browser, protects environment variables, and ensures the data is ready before the page even reaches the client.
+
+2. Interactive UI (components/DashboardClient.tsx)
+
+The DashboardClient is marked with "use client". It receives the pre-fetched course data as a strongly-typed prop (initialCourses). By separating this, the component focuses entirely on orchestrating the Framer Motion animations, interactive hover states, and the layoutId sidebar micro-interactions without mixing server logic.
+
+3. Loading States (app/loading.tsx)
+
+I utilized Next.js's native <Suspense> boundaries via loading.tsx. This instantly renders a hardware-accelerated, pulsing skeleton UI matching the exact dimensions of the Bento grid while the database query resolves on the server.
+
+⚡ Performance & Animation Constraints
+
+Zero Layout Shifts: All interactive hover states and staggered entrance animations strictly utilize GPU-accelerated CSS properties (transform: scale and opacity). Hover states rely on box-shadow and pseudo-element opacity fades rather than margins or borders to prevent browser repaints.
+
+Spring Physics: Framer Motion is configured with custom spring physics (stiffness: 300, damping: 20) globally. This ensures entrance animations and UI interactions feel natural, snappy, and non-linear.
+
+Semantic HTML (No "Div Soup"): The DOM tree is constructed logically using <main>, <aside>, <nav>, <section>, and <article> tags to ensure accessibility and clean markup.
+
+🧗 Challenges Faced
+
+Hydration Mismatches with Dynamic UI: The ActivityTile features a mock contribution graph utilizing Math.random(). Initially, this caused React Hydration errors because the server-rendered HTML did not match the client-rendered output. I resolved this by initializing a blank grid during SSR and utilizing a useEffect hook to dynamically populate the randomized blocks only after the component safely mounted on the client.
+
+Tailwind v4 PostCSS Integration: Configuring the brand new Tailwind CSS v4 required moving away from the traditional PostCSS plugin structure to the new @tailwindcss/postcss package and updating the globals.css import syntax to ensure the dark-mode theme compiled properly locally.
+
+🚀 How to Run Locally
+
+Prerequisites
+
+Node.js 18.x or higher
+
+A free Supabase account.
+
+1. Database Setup
+
+Navigate to the SQL Editor in your Supabase dashboard.
+
+Paste and run the contents of the schema.sql file provided in this repository to create the courses table, setup Row Level Security (RLS), and insert the seed data.
+
+2. Local Installation
+
+Clone the repository:
+
+git clone <your-repo-url>
+cd <your-repo-directory>
+
+
+Install dependencies:
+
+npm install
+
+
+Configure Environment Variables:
+
+Copy the example environment file:
+
+cp .env.example .env.local
+
+
+Open .env.local and add your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (found in your Supabase Project Settings -> API).
+
+Start the development server:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+View the application: Open http://localhost:3000.
